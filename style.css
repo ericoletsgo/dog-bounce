@@ -1,9 +1,18 @@
 body {
-    margin: 0;
-    overflow: hidden;
-    background: #e0f7fa;
-  }
-  
-  #canvas-container {
-  }
-  
+  margin: 0;
+  overflow: hidden;
+  background: #e0f7fa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+#canvas-container {
+  border: 2px solid #00796b;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+canvas {
+  display: block;
+}
