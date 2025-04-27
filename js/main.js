@@ -1,10 +1,9 @@
 import { setupCanvas } from './canvas.js';
 import { Dog }         from './dog.js';
 import { randomBetween } from './utils.js';
-import { GRAVITY, RESTITUTION, NUM_DOGS, DOG_RADIUS, DRAG_THROW_MULTIPLIER } from './config.js';
+import { GRAVITY, RESTITUTION, NUM_DOGS, DOG_RADIUS, DRAG_THROW_MULTIPLIER, DOG_IMAGE_SOURCES } from './config.js';
 
-let dogs = [];
-let draggedDog = null;
+let dogs = [], draggedDog = null;
 let dragOffsetX = 0, dragOffsetY = 0;
 let lastMouseX = 0, lastMouseY = 0;
 let throwVx = 0, throwVy = 0;
@@ -22,7 +21,8 @@ function createDogs() {
     const y = randomBetween(DOG_RADIUS, height / 2);
     const vx = randomBetween(-2, 2);
     const vy = randomBetween(-2, 2);
-    dogs.push(new Dog(x, y, vx, vy, DOG_RADIUS));
+    const imgIndex = Math.floor(randomBetween(0, DOG_IMAGE_SOURCES.length));
+    dogs.push(new Dog(x, y, vx, vy, DOG_RADIUS, imgIndex));
   }
 }
 
@@ -61,7 +61,7 @@ function handleMouseMove(e) {
   lastMouseX = pos.x;
   lastMouseY = pos.y;
   draggedDog.setPosition(pos.x - dragOffsetX, pos.y - dragOffsetY);
-}
+  }
 
 function handleMouseUp() {
   if (!draggedDog) return;
@@ -79,4 +79,5 @@ function gameLoop() {
 
 createDogs();
 canvas.addEventListener('mousedown', handleMouseDown);
+canvas.addEventListener('touchstart', handleMouseDown, { passive: false });
 requestAnimationFrame(gameLoop);

@@ -1,13 +1,30 @@
 import { distance } from './utils.js';
+import { USE_IMAGES, DOG_IMAGE_SOURCES, DOG_RADIUS } from './config.js';
+
+const dogImages = DOG_IMAGE_SOURCES.map(src => {
+  const img = new Image();
+  img.src = src;
+  return img;
+});
+let imagesLoadedCount = 0;
+let imageLoadErrors = new Array(DOG_IMAGE_SOURCES.length).fill(false);
+
+dogImages.forEach((img, idx) => {
+  img.onload = () => { imagesLoadedCount++; };
+  img.onerror = () => { imageLoadErrors[idx] = true; };
+});
 
 export class Dog {
-  constructor(x, y, vx, vy, radius) {
+  constructor(x, y, vx, vy, radius, imgIndex) {
     this.x = x;
     this.y = y;
     this.vx = vx;
     this.vy = vy;
     this.radius = radius;
     this.isDragging = false;
+    this.width = radius * 2;
+    this.height = radius * 2;
+    this.imgIndex = imgIndex;
   }
 
   startDrag() {
@@ -30,7 +47,7 @@ export class Dog {
     this.vy += gravity;
     this.x += this.vx;
     this.y += this.vy;
-    // bounce
+    // bounce 
     if (this.x - this.radius < 0) {
       this.x = this.radius;
       this.vx *= -restitution;
@@ -51,6 +68,21 @@ export class Dog {
   }
 
   draw(ctx) {
+    if (USE_IMAGES) {
+      const img = dogImages[this.imgIndex];
+      const error = imageLoadErrors[this.imgIndex];
+      if (!error && imagesLoadedCount > this.imgIndex) {
+        ctx.drawImage(
+          img,
+          this.x - this.radius,
+          this.y - this.radius,
+          this.width,
+          this.height
+        );
+        return;
+      }
+    }
+
     ctx.fillStyle = 'brown';
     ctx.beginPath();
     ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
